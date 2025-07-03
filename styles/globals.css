@@ -1,0 +1,18 @@
+@keyframes emoji-bounce {
+  0% { transform: scale(0.7) translateY(-40px); opacity: 0; }
+  40% { transform: scale(1.2) translateY(0); opacity: 1; }
+  60% { transform: scale(0.95) translateY(-10px); }
+  80% { transform: scale(1.05) translateY(0); }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+@keyframes pulse {
+  0% { filter: drop-shadow(0 0 0 #fff); }
+  100% { filter: drop-shadow(0 0 16px #f472b6) drop-shadow(0 0 24px #818cf8); }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.animate-emoji-bounce { animation: emoji-bounce 1.2s cubic-bezier(.68,-0.55,.27,1.55) 1, pulse 1.5s infinite alternate; }
+.animate-fade-in { animation: fade-in 1s ease 0.5s both; }
+.animate-bounce-in { animation: emoji-bounce 1.2s cubic-bezier(.68,-0.55,.27,1.55) 1; }
