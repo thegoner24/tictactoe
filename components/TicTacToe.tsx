@@ -7,7 +7,7 @@ const emptyBoard = Array(9).fill(null);
 
 // --- Types ---
 type Mode = "human" | "bot";
-type Difficulty = "easy" | "hard";
+
 type WinnerResult = { winner: string; line: number[] } | null;
 
 function calculateWinner(squares: (string | null)[]): WinnerResult {
@@ -40,30 +40,7 @@ function getRandomMove(squares: (string | null)[]): number {
   return empty[Math.floor(Math.random() * empty.length)];
 }
 
-function getBestMove(squares: (string | null)[], botMark: string, humanMark: string): number {
-  // Minimax algorithm for unbeatable bot
-  function minimax(board: (string | null)[], isMax: boolean): { score: number; move: number | null } {
-    const result = calculateWinner(board);
-    if (result?.winner === botMark) return { score: 1, move: null };
-    if (result?.winner === humanMark) return { score: -1, move: null };
-    if (board.every(Boolean)) return { score: 0, move: null };
-    let best = { score: isMax ? -Infinity : Infinity, move: null as number | null };
-    for (let i = 0; i < 9; i++) {
-      if (!board[i]) {
-        board[i] = isMax ? botMark : humanMark;
-        const { score } = minimax(board, !isMax);
-        board[i] = null;
-        if (isMax) {
-          if (score > best.score) best = { score, move: i };
-        } else {
-          if (score < best.score) best = { score, move: i };
-        }
-      }
-    }
-    return best;
-  }
-  return minimax([...squares], true).move ?? getRandomMove(squares);
-}
+
 
 export default function TicTacToe() {
   // --- State ---
@@ -71,7 +48,7 @@ export default function TicTacToe() {
   const [step, setStep] = useState(0);
   const [xIsNext, setXIsNext] = useState(true);
   const [mode, setMode] = useState<Mode>("human");
-  const [difficulty, setDifficulty] = useState<Difficulty>("easy");
+  
   const [names, setNames] = useState<{ X: string; O: string }>({ X: "Player X", O: "Player O" });
   const [editingNames, setEditingNames] = useState(false);
   const [scores, setScores] = useState<{ X: number; O: number; Draw: number }>({ X: 0, O: 0, Draw: 0 });
@@ -113,10 +90,7 @@ export default function TicTacToe() {
     setXIsNext(true); // Always start with X (human)
   }
 
-  function handleDifficultyChange(newDiff: Difficulty) {
-    setDifficulty(newDiff);
-    handleReset();
-  }
+  
 
   function jumpTo(move: number) {
     setStep(move);
@@ -130,17 +104,10 @@ export default function TicTacToe() {
   // --- Bot move effect ---
   useEffect(() => {
     if (isBotTurn) {
-      const makeMove = () => {
-        // Simple bot: pick a random empty cell
-        const empty = squares.map((v, i) => (v === null ? i : null)).filter((v) => v !== null) as number[];
-        if (empty.length === 0) return;
-        const move = empty[Math.floor(Math.random() * empty.length)];
-        handleClick(move);
-      };
-      const timeout = setTimeout(makeMove, 600);
-      return () => clearTimeout(timeout);
+      const botMove = getRandomMove(squares); // Always easy mode for now
+      setTimeout(() => handleClick(botMove), 500);
     }
-  }, [isBotTurn, squares]);
+  }, [isBotTurn, squares, handleClick]);
 
   // --- Score tracking effect ---
   useEffect(() => {
